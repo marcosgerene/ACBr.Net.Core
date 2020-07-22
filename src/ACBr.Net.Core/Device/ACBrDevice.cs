@@ -1,12 +1,12 @@
-// ***********************************************************************
+﻿// ***********************************************************************
 // Assembly         : ACBr.Net.Core
 // Author           : RFTD
-// Created          : 04-19-2014
+// Created          : 20-12-2018
 //
 // Last Modified By : RFTD
-// Last Modified On : 08-30-2015
+// Last Modified On : 20-12-2018
 // ***********************************************************************
-// <copyright file="AssemblyExtenssions.cs" company="ACBr.Net">
+// <copyright file="ACBrDevice.cs" company="ACBr.Net">
 //		        		   The MIT License (MIT)
 //	     		    Copyright (c) 2016 Grupo ACBr.Net
 //
@@ -30,50 +30,70 @@
 // ***********************************************************************
 
 using System;
+using System.Text;
 
-#if NETFULL
-
-using System.IO;
-using System.Drawing;
-
-#endif
-
-namespace ACBr.Net.Core.Extensions
+namespace ACBr.Net.Core.Device
 {
-    /// <summary>
-    /// Class ByteExtensions.
-    /// </summary>
-    public static partial class ByteExtensions
+    public abstract class ACBrDevice : IDisposable
     {
-        /// <summary>
-        /// To the base64.
-        /// </summary>
-        /// <param name="byteArrayIn">The byte array in.</param>
-        /// <returns>System.String.</returns>
-        public static string ToBase64(this byte[] byteArrayIn)
+        #region Constructors
+
+        protected ACBrDevice(ACBrDeviceConfig config)
         {
-            if (byteArrayIn == null || byteArrayIn.Length < 1) return string.Empty;
-            return Convert.ToBase64String(byteArrayIn);
+            Config = config;
         }
 
-#if NETFULL
-
-        /// <summary>
-        /// To the image.
-        /// </summary>
-        /// <param name="byteArrayIn">The byte array in.</param>
-        /// <returns>Image.</returns>
-        public static Image ToImage(this byte[] byteArrayIn)
+        ~ACBrDevice()
         {
-            if (byteArrayIn == null) return null;
-
-            using (var ms = new MemoryStream(byteArrayIn))
-            {
-                var returnImage = Image.FromStream(ms);
-                return returnImage;
-            }
+            Dispose(false);
         }
 
-#endif
+        #endregion Constructors
+
+        #region Properties
+
+        public ACBrDeviceConfig Config { get; protected set; }
+
+        #endregion Properties
+
+        #region Methods
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="dados"></param>
+        /// <returns></returns>
+        protected virtual byte[] WriteConvert(byte[] dados)
+        {
+            return Encoding.Convert(Encoding.UTF8, Config.Encoding, dados);
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="dados"></param>
+        /// <returns></returns>
+        protected virtual byte[] ReadConvert(byte[] dados)
+        {
+            return Encoding.Convert(Config.Encoding, Encoding.UTF8, dados);
+        }
+
+        public abstract bool Ativar();
+
+        public abstract bool Desativar();
+
+        public abstract void SendCommand(byte[] dados);
+
+        public abstract byte[] GetResposta();
+
+        protected abstract void Dispose(bool disposing);
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        #endregion Methods
     }
 }

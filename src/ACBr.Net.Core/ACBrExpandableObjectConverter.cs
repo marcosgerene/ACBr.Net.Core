@@ -4,9 +4,9 @@
 // Created          : 04-19-2014
 //
 // Last Modified By : RFTD
-// Last Modified On : 08-30-2015
+// Last Modified On : 04-19-2014
 // ***********************************************************************
-// <copyright file="AssemblyExtenssions.cs" company="ACBr.Net">
+// <copyright file="ACBrExpandableObjectConverter.cs" company="ACBr.Net">
 //		        		   The MIT License (MIT)
 //	     		    Copyright (c) 2016 Grupo ACBr.Net
 //
@@ -30,50 +30,32 @@
 // ***********************************************************************
 
 using System;
+using System.ComponentModel;
+using System.Globalization;
 
-#if NETFULL
-
-using System.IO;
-using System.Drawing;
-
-#endif
-
-namespace ACBr.Net.Core.Extensions
+namespace ACBr.Net.Core
 {
-    /// <summary>
-    /// Class ByteExtensions.
-    /// </summary>
-    public static partial class ByteExtensions
-    {
-        /// <summary>
-        /// To the base64.
-        /// </summary>
-        /// <param name="byteArrayIn">The byte array in.</param>
-        /// <returns>System.String.</returns>
-        public static string ToBase64(this byte[] byteArrayIn)
-        {
-            if (byteArrayIn == null || byteArrayIn.Length < 1) return string.Empty;
-            return Convert.ToBase64String(byteArrayIn);
-        }
+	/// <summary>
+	/// Classe ACBrExpandableObjectConverter.
+	/// </summary>
+	public class ACBrExpandableObjectConverter : ExpandableObjectConverter
+	{
+		/// <summary>
+		/// Converts to.
+		/// </summary>
+		/// <param name="context">The context.</param>
+		/// <param name="culture">The culture.</param>
+		/// <param name="value">The value.</param>
+		/// <param name="destType">Type of the dest.</param>
+		/// <returns>System.Object.</returns>
+		public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destType)
+		{
+			if (value != null && destType == typeof(string))
+			{
+				return $"({value.GetType().Name})";
+			}
 
-#if NETFULL
-
-        /// <summary>
-        /// To the image.
-        /// </summary>
-        /// <param name="byteArrayIn">The byte array in.</param>
-        /// <returns>Image.</returns>
-        public static Image ToImage(this byte[] byteArrayIn)
-        {
-            if (byteArrayIn == null) return null;
-
-            using (var ms = new MemoryStream(byteArrayIn))
-            {
-                var returnImage = Image.FromStream(ms);
-                return returnImage;
-            }
-        }
-
-#endif
-    }
+			return base.ConvertTo(context, culture, value, destType);
+		}
+	}
 }

@@ -6,7 +6,7 @@
 // Last Modified By : RFTD
 // Last Modified On : 08-30-2015
 // ***********************************************************************
-// <copyright file="EventHandlerExtension.cs" company="ACBr.Net">
+// <copyright file="ImageExtensions.cs" company="ACBr.Net">
 //		        		   The MIT License (MIT)
 //	     		    Copyright (c) 2016 Grupo ACBr.Net
 //
@@ -36,122 +36,122 @@ using System.Linq;
 
 namespace ACBr.Net.Core.Extensions
 {
-	/// <summary>
-	/// Class ImageExtensions.
-	/// </summary>
-	public static class ImageExtensions
-	{
-		/// <summary>
-		/// To the byte array.
-		/// </summary>
-		/// <param name="imageIn">The image in.</param>
-		/// <param name="format">The format.</param>
-		/// <returns>System.Byte[].</returns>
-		public static byte[] ToByteArray(this Image imageIn, ImageFormat format = null)
-		{
-			if (imageIn == null) return null;
+    /// <summary>
+    /// Class ImageExtensions.
+    /// </summary>
+    public static class ImageExtensions
+    {
+        /// <summary>
+        /// To the byte array.
+        /// </summary>
+        /// <param name="imageIn">The image in.</param>
+        /// <param name="format">The format.</param>
+        /// <returns>System.Byte[].</returns>
+        public static byte[] ToByteArray(this Image imageIn, ImageFormat format = null)
+        {
+            if (imageIn == null) return null;
 
-			if (format == null)
-			{
-				format = imageIn.RawFormat;
-			}
+            if (format == null)
+            {
+                format = imageIn.RawFormat;
+            }
 
-			using (var ms = new MemoryStream())
-			{
-				imageIn.Save(ms, format);
-				return ms.ToArray();
-			}
-		}
+            using (var ms = new MemoryStream())
+            {
+                imageIn.Save(ms, format);
+                return ms.ToArray();
+            }
+        }
 
-		/// <summary>
-		/// To the base64.
-		/// </summary>
-		/// <param name="imageIn">The image in.</param>
-		/// <param name="format">The format.</param>
-		/// <returns>System.String.</returns>
-		public static string ToBase64(this Image imageIn, ImageFormat format = null)
-		{
-			if (imageIn == null) return string.Empty;
-			var imgBytes = imageIn.ToByteArray(format);
-			return imgBytes.ToBase64();
-		}
+        /// <summary>
+        /// To the base64.
+        /// </summary>
+        /// <param name="imageIn">The image in.</param>
+        /// <param name="format">The format.</param>
+        /// <returns>System.String.</returns>
+        public static string ToBase64(this Image imageIn, ImageFormat format = null)
+        {
+            if (imageIn == null) return string.Empty;
+            var imgBytes = imageIn.ToByteArray(format);
+            return imgBytes.ToBase64();
+        }
 
-		/// <summary>
-		/// To the stream.
-		/// </summary>
-		/// <param name="imageIn">The image in.</param>
-		/// <param name="format">The format.</param>
-		/// <returns>MemoryStream.</returns>
-		public static MemoryStream ToStream(this Image imageIn, ImageFormat format = null)
-		{
-			if (imageIn == null) return null;
+        /// <summary>
+        /// To the stream.
+        /// </summary>
+        /// <param name="imageIn">The image in.</param>
+        /// <param name="format">The format.</param>
+        /// <returns>MemoryStream.</returns>
+        public static MemoryStream ToStream(this Image imageIn, ImageFormat format = null)
+        {
+            if (imageIn == null) return null;
 
-			if (format == null)
-			{
-				format = imageIn.RawFormat;
-			}
+            if (format == null)
+            {
+                format = imageIn.RawFormat;
+            }
 
-			var ms = new MemoryStream();
-			imageIn.Save(ms, format);
-			ms.Seek(0, SeekOrigin.Begin);
-			return ms;
-		}
+            var ms = new MemoryStream();
+            imageIn.Save(ms, format);
+            ms.Seek(0, SeekOrigin.Begin);
+            return ms;
+        }
 
-		/// <summary>
-		/// To the file stream.
-		/// </summary>
-		/// <param name="imageIn">The image in.</param>
-		/// <param name="fileName">Name of the file.</param>
-		/// <param name="format">The format.</param>
-		/// <returns>FileStream.</returns>
-		public static FileStream ToFileStream(this Image imageIn, string fileName, ImageFormat format = null)
-		{
-			if (imageIn == null) return null;
+        /// <summary>
+        /// To the file stream.
+        /// </summary>
+        /// <param name="imageIn">The image in.</param>
+        /// <param name="fileName">Name of the file.</param>
+        /// <param name="format">The format.</param>
+        /// <returns>FileStream.</returns>
+        public static FileStream ToFileStream(this Image imageIn, string fileName, ImageFormat format = null)
+        {
+            if (imageIn == null) return null;
 
-			if (format == null)
-			{
-				format = imageIn.RawFormat;
-			}
+            if (format == null)
+            {
+                format = imageIn.RawFormat;
+            }
 
-			var ms = new FileStream(fileName, FileMode.CreateNew, FileAccess.ReadWrite);
-			imageIn.Save(ms, format);
-			ms.Seek(0, SeekOrigin.Begin);
-			return ms;
-		}
+            var ms = new FileStream(fileName, FileMode.CreateNew, FileAccess.ReadWrite);
+            imageIn.Save(ms, format);
+            ms.Seek(0, SeekOrigin.Begin);
+            return ms;
+        }
 
-		/// <summary>
-		/// Adds the page.
-		/// </summary>
-		/// <param name="image">The image.</param>
-		/// <param name="toAdd">To add.</param>
-		public static void AddPage(this Image image, Image toAdd)
-		{
-			if (image.IsNull() || toAdd.IsNull()) return;
+        /// <summary>
+        /// Adds the page.
+        /// </summary>
+        /// <param name="image">The image.</param>
+        /// <param name="toAdd">To add.</param>
+        public static void AddPage(this Image image, Image toAdd)
+        {
+            if (image.IsNull() || toAdd.IsNull()) return;
 
-			//get the codec for tiff files
-			var info = ImageCodecInfo.GetImageEncoders().SingleOrDefault(ice => ice.MimeType == "image/tiff");
-			if (info == null) return;
+            //get the codec for tiff files
+            var info = ImageCodecInfo.GetImageEncoders().SingleOrDefault(ice => ice.MimeType == "image/tiff");
+            if (info == null) return;
 
-			//use the save encoder
-			var enc = Encoder.SaveFlag;
-			var ep = new EncoderParameters(1);
+            //use the save encoder
+            var enc = Encoder.SaveFlag;
+            var ep = new EncoderParameters(1);
 
-			var frame = image.GetFrameCount(FrameDimension.Page);
-			if (frame == 0)
-			{
-				//save the first frame
-				ep.Param[0] = new EncoderParameter(enc, (long)EncoderValue.MultiFrame);
-				image.Save(toAdd.ToStream(), info, ep);
-			}
-			else
-			{
-				//save the intermediate frames
-				ep.Param[0] = new EncoderParameter(enc, (long)EncoderValue.FrameDimensionPage);
-				image.SaveAdd(toAdd, ep);
-			}
+            var frame = image.GetFrameCount(FrameDimension.Page);
+            if (frame == 0)
+            {
+                //save the first frame
+                ep.Param[0] = new EncoderParameter(enc, (long)EncoderValue.MultiFrame);
+                image.Save(toAdd.ToStream(), info, ep);
+            }
+            else
+            {
+                //save the intermediate frames
+                ep.Param[0] = new EncoderParameter(enc, (long)EncoderValue.FrameDimensionPage);
+                image.SaveAdd(toAdd, ep);
+            }
 
-			ep.Param[0] = new EncoderParameter(enc, (long)EncoderValue.Flush);
-			image.SaveAdd(ep);
-		}
-	}
+            ep.Param[0] = new EncoderParameter(enc, (long)EncoderValue.Flush);
+            image.SaveAdd(ep);
+        }
+    }
 }
